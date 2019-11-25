@@ -45,3 +45,12 @@ def generateRandomVelocity(N):
     
     return velocity
 
+def limitVelocity(v):
+    v = max(-7,v)
+    v = min(v,7)
+    return v
+
+def limitPosition(p):
+    p = max(1,p)
+    p = min(8,p)
+    return p
