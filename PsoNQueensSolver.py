@@ -1,13 +1,16 @@
 from NQueensSolver import NQueensSolver
-from utils import fitness, generateRandomParticle, generateRandomVelocity, limitVelocity, limitPosition
+from utils import fitness, generateRandomParticle, generateRandomVelocity, limitVelocity, limitPosition, generateRandomPosition, generateRandomSwap
 import random
+from DiscreteDimension import Position, Velocity
 
 class Particle:
     def __init__(self, N):
         self.N = N
-        self.positions = generateRandomParticle(N)
-        self.velocities = generateRandomVelocity(N)
-        self.pbest = (self.positions[:], fitness(self.positions))
+        self.position = Position()
+        self.position.values = generateRandomPosition(N)
+        self.velocity = Velocity()
+        self.velocity.values = generateRandomSwap(N)
+        self.pbest = (self.position, fitness(self.position.values))
         self.omega = 0.7
         self.alfa = 1.2
         self.beta = 2.3
@@ -15,39 +18,43 @@ class Particle:
     def update(self, gbest):
         self.r1 = random.uniform(0,1)
         self.r2 = random.uniform(0,1)
-        for i in range(self.N):
-            self.velocities[i] = self.omega*self.velocities[i] + self.alfa*self.r1*(self.pbest[0][i] - self.positions[i]) + self.beta*self.r2*(gbest[i] - self.positions[i])
-            self.velocities[i] = limitVelocity(self.velocities[i])
-            self.positions[i] = round(self.positions[i] + self.velocities[i])
-            self.positions[i] = limitPosition(self.positions[i])
         
-        if fitness(self.positions) > self.pbest[1]:
-            self.pbest = (self.positions[:], fitness(self.positions))
+        inertiaFactor = self.omega*self.velocity
+        cognitiveFactor = self.alfa*self.r1*(self.pbest[0] - self.position)
+        socialFactor = self.beta*self.r2*(gbest - self.position)
+        
+        self.velocity = inertiaFactor + cognitiveFactor + socialFactor
+        self.position = self.position + self.velocity
+
+        if fitness(self.position.values) > self.pbest[1]:
+            self.pbest = (self.position, fitness(self.position.values))
 
 class PsoNQueensSolver(NQueensSolver):
     def __init__(self, numberOfQueens, chartGen = None):
         NQueensSolver.__init__(self, numberOfQueens)
         self.solution = None
-        self.numberOfParticles = 40
+        self.numberOfParticles = 10
         self.swarm = [Particle(numberOfQueens) for _ in range(self.numberOfParticles)]
         self.chartGen = chartGen
         self.iteration = 0
 
     def solve(self):
-        gbest = (self.swarm[0].positions, self.swarm[0].pbest[1])
+        gBestPosition = Position()
+        gBestPosition.values = self.swarm[0].position.values
+        gbest = (gBestPosition, self.swarm[0].pbest[1])
         gbest = self.updateGBest(gbest)
 
         i = 0
-        while i < 5000:
+        while i < 1000:
             self.iteration += 1
             i += 1
             for p in self.swarm:
                 p.update(gbest[0])
             gbest = self.updateGBest(gbest)
-            # if self.chartGen and self.iteration % 10 == 0:
-            #     self.generateValuesToChart()
+            if self.chartGen and self.iteration % 10 == 0:
+                self.generateValuesToChart()
         
-        self.solution = gbest[0]
+        self.solution = gbest[0].values
         print(gbest[1], self.iteration)
     
     def generateValuesToChart(self):

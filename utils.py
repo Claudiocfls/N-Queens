@@ -37,6 +37,24 @@ def generateRandomParticle(N):
 def generateRandomGenome(N):
     return generateRandomParticle(N)
 
+def generateRandomPosition(N):
+    l = [c+1 for c in range(N)]
+    position = []
+    for j in range(N):
+        indexChosen = random.randint(0,len(l)-1)
+        position.append(l[indexChosen])
+        del l[indexChosen]
+    return position
+
+def generateRandomSwap(N):
+    numOfSwaps = random.randint(1,5)
+    swaps = []
+    for _ in range(numOfSwaps):
+        i = random.randint(0,N-1)
+        j = random.randint(0,N-1)
+        swaps.append((i,j))
+    return swaps
+
 # Return a list with random numbers
 # between -7 and 7 inclusive representing
 # a velocity on PSO algorithm
