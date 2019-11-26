@@ -34,6 +34,9 @@ def generateRandomParticle(N):
     
     return particle
 
+def generateRandomGenome(N):
+    return generateRandomParticle(N)
+
 # Return a list with random numbers
 # between -7 and 7 inclusive representing
 # a velocity on PSO algorithm
@@ -44,4 +47,7 @@ def generateRandomVelocity(N):
         velocity.append(randomVelocity)
     
     return velocity
+
+
+
 

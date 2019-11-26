@@ -20,4 +20,4 @@ class AnimatedChart:
 
     def save(self):
         animation = self.camera.animate()  
-        animation.save('iterations_pso.gif')
+        animation.save('iterations_pso.gif', writer="imagemagick")
