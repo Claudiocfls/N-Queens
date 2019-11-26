@@ -11,3 +11,4 @@ chart.save()
 sol = algo.getSolution()
 print(sol)
 print(fitness(sol))
+
