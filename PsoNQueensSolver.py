@@ -2,6 +2,7 @@ from NQueensSolver import NQueensSolver
 from utils import fitness, generateRandomParticle, generateRandomVelocity, limitVelocity, limitPosition, generateRandomPosition, generateRandomSwap
 import random
 from DiscreteDimension import Position, Velocity
+from itertools import combinations
 
 class Particle:
     def __init__(self, N):
@@ -32,11 +33,13 @@ class Particle:
 class PsoNQueensSolver(NQueensSolver):
     def __init__(self, numberOfQueens, chartGen = None):
         NQueensSolver.__init__(self, numberOfQueens)
+        self.numberOfQueens = numberOfQueens
         self.solution = None
-        self.numberOfParticles = 10
+        self.numberOfParticles = 20
         self.swarm = [Particle(numberOfQueens) for _ in range(self.numberOfParticles)]
         self.chartGen = chartGen
         self.iteration = 0
+        self.solutionFitness = len(list(combinations([0]*self.numberOfQueens, 2)))
 
     def solve(self):
         gBestPosition = Position()
@@ -45,7 +48,8 @@ class PsoNQueensSolver(NQueensSolver):
         gbest = self.updateGBest(gbest)
 
         i = 0
-        while i < 1000:
+        self.iteration = 0
+        while not self.convergenceCriterium(gbest):
             self.iteration += 1
             i += 1
             for p in self.swarm:
@@ -55,7 +59,7 @@ class PsoNQueensSolver(NQueensSolver):
                 self.generateValuesToChart()
         
         self.solution = gbest[0].values
-        print(gbest[1], self.iteration)
+        # print(gbest[1], self.iteration)
     
     def generateValuesToChart(self):
         values = [0]*28
@@ -71,3 +75,14 @@ class PsoNQueensSolver(NQueensSolver):
                 gbest = (p.pbest[0],p.pbest[1])
         
         return gbest
+    
+    # the solution converged if the majority o particles has f(pbest) = f(gbest)
+    def convergenceCriterium(self, gbest):
+        majority = self.numberOfParticles // 2 + 1
+        count = 0
+
+        for p in self.swarm:
+            if p.pbest[1] == gbest[1]:
+                count += 1
+
+        return count >= majority and gbest[1] == self.solutionFitness

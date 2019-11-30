@@ -21,3 +21,14 @@ class AnimatedChart:
     def save(self):
         animation = self.camera.animate()  
         animation.save('iterations_pso.gif', writer="imagemagick")
+
+class BarChart:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        plt.bar(self.x, self.y)
+        plt.xlabel('Número de rainhas')
+        plt.ylabel('Média do número de iterações')
+    
+    def show(self):
+        plt.show()

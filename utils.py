@@ -26,10 +26,11 @@ def fitness(state):
 # Return a list with random numbers
 # between 1 and 8 inclusive representing
 # a particle on PSO algorithm
+# IMPORTANT: PSO doesnt use this function
 def generateRandomParticle(N):
     particle = []
     for i in range(N):
-        randomPosition = random.randint(1,8)
+        randomPosition = random.randint(1,N)
         particle.append(randomPosition)
     
     return particle
@@ -47,7 +48,7 @@ def generateRandomPosition(N):
     return position
 
 def generateRandomSwap(N):
-    numOfSwaps = random.randint(1,5)
+    numOfSwaps = random.randint(1,N//2)
     swaps = []
     for _ in range(numOfSwaps):
         i = random.randint(0,N-1)
@@ -58,6 +59,7 @@ def generateRandomSwap(N):
 # Return a list with random numbers
 # between -7 and 7 inclusive representing
 # a velocity on PSO algorithm
+# IMPORTANT: PSO doesnt use this function
 def generateRandomVelocity(N):
     velocity = []
     for i in range(N):
@@ -66,11 +68,13 @@ def generateRandomVelocity(N):
     
     return velocity
 
+# IMPORTANT: PSO doesnt use this function
 def limitVelocity(v):
     v = max(-7,v)
     v = min(v,7)
     return v
 
+# IMPORTANT: PSO doesnt use this function
 def limitPosition(p):
     p = max(1,p)
     p = min(8,p)
